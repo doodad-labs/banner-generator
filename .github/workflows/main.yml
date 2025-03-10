@@ -1,4 +1,4 @@
-name: Generate Repo Image Weekly
+name: Generate Repo Image Daily
 
 permissions:
   contents: write
