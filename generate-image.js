@@ -47,19 +47,21 @@ async function fetchRepos() {
 }
 
 async function loadImages() {
-    const [starPngBuffer, logo, logo_dark] = await Promise.all([
+    const [starPngBuffer, starPngBuffer_dark, logo, logo_dark] = await Promise.all([
         svgToPng('star.svg'),
+        svgToPng('star@dark.svg'),
         loadImage('logo.png'),
         loadImage('logo@dark.png')
     ]);
     return {
         star: await loadImage(starPngBuffer),
+        star_dark: await loadImage(starPngBuffer_dark),
         logo,
         logo_dark
     };
 }
 
-function drawRepo(ctx, theme, repo, x, y, star) {
+function drawRepo(ctx, theme, repo, x, y, star, star_dark) {
     ctx.beginPath();
     ctx.arc(x, y - 13, 15, 0, 2 * Math.PI);
     ctx.fillStyle = languageColours[repo.language] || '#6e6e6e';
@@ -69,7 +71,7 @@ function drawRepo(ctx, theme, repo, x, y, star) {
     const name = `${repo.name.substring(0, MAX_NAME_LENGTH)}${repo.name.length > MAX_NAME_LENGTH ? '...' : ''}`;
     ctx.fillText(name, x + 40, y);
 
-    ctx.drawImage(star, x + 40 + (name.length * 20) + 20, y - 35, 40, 40);
+    ctx.drawImage(theme === 'light' ? star : star_dark, x + 40 + (name.length * 20) + 20, y - 35, 40, 40);
     ctx.fillText(formatNumber(repo.stars), x + 40 + (name.length * 20) + 70, y);
 }
 
@@ -80,7 +82,7 @@ async function generateImage(theme) {
 
     const canvas = createCanvas(WIDTH, HEIGHT);
     const ctx = canvas.getContext('2d');
-    const { star, logo, logo_dark } = await loadImages();
+    const { star, star_dark, logo, logo_dark } = await loadImages();
 
     ctx.fillStyle = theme === 'light' ? 'white' : '#0d1117';
     ctx.fillRect(0, 0, WIDTH, HEIGHT);
@@ -93,7 +95,7 @@ async function generateImage(theme) {
     repos.forEach((repo, index) => {
         const onRight = index % 2 !== 0;
         const x = 20 + (onRight ? WIDTH / 2 : 0);
-        drawRepo(ctx, theme, repo, x, y, star);
+        drawRepo(ctx, theme, repo, x, y, star, star_dark);
         if (onRight) y += 80;
     });
 
