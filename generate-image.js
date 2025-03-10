@@ -82,7 +82,7 @@ async function generateImage(theme) {
     const ctx = canvas.getContext('2d');
     const { star, logo, logo_dark } = await loadImages();
 
-    ctx.fillStyle = theme === 'light' ? 'red' : '#0d1117';
+    ctx.fillStyle = theme === 'light' ? 'white' : '#0d1117';
     ctx.fillRect(0, 0, WIDTH, HEIGHT);
     ctx.drawImage(theme === 'light' ? logo : logo_dark, 0, 0, WIDTH, 664);
     ctx.fillStyle = theme === 'light' ? 'black' : 'white';
