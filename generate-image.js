@@ -6,7 +6,7 @@ const axios = require('axios');
 
 registerFont('UbuntuMono.ttf', { family: 'Ubuntu Mono', weight: 'normal', style: 'normal' });
 
-const GITHUB_USERNAME = process.env.GITHUB_USERNAME;
+const GITHUB_USERNAME = "doodad-labs"//process.env.GITHUB_USERNAME;
 const WIDTH = 1640;
 const INIT_HEIGHT = 664;
 const MAX_NAME_LENGTH = 26;
@@ -84,8 +84,8 @@ async function generateImage(theme) {
     const ctx = canvas.getContext('2d');
     const { star, star_dark, logo, logo_dark } = await loadImages();
 
-    ctx.fillStyle = theme === 'light' ? 'white' : '#0d1117';
-    ctx.fillRect(0, 0, WIDTH, HEIGHT);
+    /* ctx.fillStyle = theme === 'light' ? 'white' : '#0d1117';
+    ctx.fillRect(0, 0, WIDTH, HEIGHT); */
     ctx.drawImage(theme === 'light' ? logo : logo_dark, 0, 0, WIDTH, 664);
     ctx.fillStyle = theme === 'light' ? 'black' : 'white';
     ctx.fillRect(0, 664, WIDTH, 2);
