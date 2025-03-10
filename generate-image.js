@@ -8,7 +8,7 @@ registerFont('UbuntuMono.ttf', { family: 'Ubuntu Mono', weight: 'normal', style:
 
 const GITHUB_USERNAME = process.env.GITHUB_USERNAME;
 const WIDTH = 1640;
-let HEIGHT = 664;
+const INIT_HEIGHT = 664;
 const MAX_NAME_LENGTH = 26;
 
 async function svgToPng(svgPathOrUrl) {
@@ -47,23 +47,25 @@ async function fetchRepos() {
 }
 
 async function loadImages() {
-    const [starPngBuffer, logo] = await Promise.all([
+    const [starPngBuffer, logo, logo_dark] = await Promise.all([
         svgToPng('star.svg'),
-        loadImage('logo.png')
+        loadImage('logo.png'),
+        loadImage('logo@dark.png')
     ]);
     return {
         star: await loadImage(starPngBuffer),
-        logo
+        logo,
+        logo_dark
     };
 }
 
-function drawRepo(ctx, repo, x, y, star) {
+function drawRepo(ctx, theme, repo, x, y, star) {
     ctx.beginPath();
     ctx.arc(x, y - 13, 15, 0, 2 * Math.PI);
     ctx.fillStyle = languageColours[repo.language] || '#6e6e6e';
     ctx.fill();
 
-    ctx.fillStyle = '#000';
+    ctx.fillStyle = theme === 'light' ? 'black' : 'white';
     const name = `${repo.name.substring(0, MAX_NAME_LENGTH)}${repo.name.length > MAX_NAME_LENGTH ? '...' : ''}`;
     ctx.fillText(name, x + 40, y);
 
@@ -71,19 +73,19 @@ function drawRepo(ctx, repo, x, y, star) {
     ctx.fillText(formatNumber(repo.stars), x + 40 + (name.length * 20) + 70, y);
 }
 
-async function generateImage() {
+async function generateImage(theme) {
     const repos = await fetchRepos();
     console.log(`Fetched ${repos.length} repos`);
-    HEIGHT += ((repos.length * 85) / 2) + 40;
+    const HEIGHT = INIT_HEIGHT + ((repos.length * 100) / 2) + 40;
 
     const canvas = createCanvas(WIDTH, HEIGHT);
     const ctx = canvas.getContext('2d');
-    const { star, logo } = await loadImages();
+    const { star, logo, logo_dark } = await loadImages();
 
-    ctx.fillStyle = 'white';
+    ctx.fillStyle = theme === 'light' ? 'red' : '#0d1117';
     ctx.fillRect(0, 0, WIDTH, HEIGHT);
-    ctx.drawImage(logo, 0, 0, WIDTH, 664);
-    ctx.fillStyle = '#000';
+    ctx.drawImage(theme === 'light' ? logo : logo_dark, 0, 0, WIDTH, 664);
+    ctx.fillStyle = theme === 'light' ? 'black' : 'white';
     ctx.fillRect(0, 664, WIDTH, 2);
     ctx.font = '40px "Ubuntu Mono"';
 
@@ -91,13 +93,14 @@ async function generateImage() {
     repos.forEach((repo, index) => {
         const onRight = index % 2 !== 0;
         const x = 20 + (onRight ? WIDTH / 2 : 0);
-        drawRepo(ctx, repo, x, y, star);
+        drawRepo(ctx, theme, repo, x, y, star);
         if (onRight) y += 80;
     });
 
     const buffer = canvas.toBuffer('image/png');
-    fs.writeFileSync('banner.png', buffer);
+    fs.writeFileSync(`banner${theme === 'dark' ? "@dark" : ""}.png`, buffer);
     console.log('Image generated: banner.png');
 }
 
-generateImage().catch(console.error);
+generateImage('light').catch(console.error);
+generateImage('dark').catch(console.error);
