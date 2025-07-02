@@ -54,13 +54,13 @@ async function generateImage(theme = 'light') {
 
     const formatted = [
         repoCount.toLocaleString('en-gb'),
-        ' repos, ',
+        ` repo${repoCount!==1 ? 's' : ''}, `,
         starCount.toLocaleString('en-gb'),
-        ' stars, ',
+        ` star${starCount!==1 ? 's' : ''}, `,
         forkCount.toLocaleString('en-gb'),
-        ' forks, ',
+        ` fork${forkCount!==1 ? 's' : ''}, `,
         issueCount.toLocaleString('en-gb'),
-        ' issues'
+        ` issue${issueCount!==1 ? 's' : ''}`
     ];
     
     ctx.fillStyle = theme === 'light' ? 'black' : 'white';
