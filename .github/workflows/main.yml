@@ -28,12 +28,13 @@ jobs:
       - name: Generate image
         env:
           GITHUB_USERNAME: ${{ github.repository_owner }}
-        run: node generate-image.js
+        run: node generate.js
 
       - name: Commit generated image
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
+          git add banner.png banner@light.png
           git add banner.png banner@dark.png
           git commit -m "Weekly update: Generated repository list image"
           git push
