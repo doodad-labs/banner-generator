@@ -1,7 +1,6 @@
 const { createCanvas, loadImage, registerFont } = require('canvas');
 const fs = require('fs');
 const axios = require('axios');
-const { parse } = require('path');
 
 registerFont('./fonts/SpaceMono.ttf', { family: 'Space Mono', weight: 'normal', style: 'normal' });
 registerFont('./fonts/SpaceMono-Bold.ttf', { family: 'Space Mono Bold', weight: 'bold', style: 'normal' });
@@ -24,10 +23,11 @@ async function fetchRepos() {
 async function loadImages() {
     return {
         template: await loadImage('imgs/template.png'),
+        templateDark: await loadImage('imgs/template-dark.png'),
     };
 }
 
-async function generateImage() {
+async function generateImage(theme = 'light') {
 
     const repos = await fetchRepos();
     console.log(`Fetched ${repos.length} repos`);
@@ -36,9 +36,9 @@ async function generateImage() {
 
     const canvas = createCanvas(WIDTH, HEIGHT);
     const ctx = canvas.getContext('2d');
-    const { template } = await loadImages();
+    const { template, templateDark } = await loadImages();
 
-    ctx.drawImage(template, 0, 0, WIDTH, HEIGHT);
+    ctx.drawImage(theme === 'light' ? template : templateDark, 0, 0, WIDTH, HEIGHT);
 
     const repoCount = repos.length;
     const starCount = repos.reduce((sum, repo) => sum + repo.stars, 0);
@@ -63,10 +63,8 @@ async function generateImage() {
         ' issues'
     ];
     
-    ctx.fillStyle = 'black';
-    ctx.fillStyle = 'black';
+    ctx.fillStyle = theme === 'light' ? 'black' : 'white';
 
-    // Display the text {number} {label}, {number} {label}, ...
     let x = 340;
     formatted.forEach((text, index) => {
 
@@ -76,8 +74,9 @@ async function generateImage() {
     });
 
     const buffer = canvas.toBuffer('image/png');
-    fs.writeFileSync(`banner.png`, buffer);
+    fs.writeFileSync(`banner@${theme === 'light' ? 'light' : 'dark'}.png`, buffer);
     console.log('Image generated: banner.png');
 }
 
 generateImage().catch(console.error);
+generateImage('dark').catch(console.error);
