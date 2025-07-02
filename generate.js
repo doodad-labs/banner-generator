@@ -1,6 +1,7 @@
 const { createCanvas, loadImage, registerFont } = require('canvas');
 const fs = require('fs');
 const axios = require('axios');
+const moment = require('moment');
 
 registerFont('./fonts/SpaceMono.ttf', { family: 'Space Mono', weight: 'normal', style: 'normal' });
 registerFont('./fonts/SpaceMono-Bold.ttf', { family: 'Space Mono Bold', weight: 'bold', style: 'normal' });
@@ -29,28 +30,19 @@ async function loadImages() {
 
 async function generateImage(theme = 'light') {
 
-    const repos = await fetchRepos();
-    console.log(`Fetched ${repos.length} repos`);
-
-    console.log(JSON.stringify(repos))
+    //const repos = await fetchRepos();
 
     const canvas = createCanvas(WIDTH, HEIGHT);
     const ctx = canvas.getContext('2d');
     const { template, templateDark } = await loadImages();
 
+    ctx.fillStyle = theme === 'light' ? 'black' : 'white';
     ctx.drawImage(theme === 'light' ? template : templateDark, 0, 0, WIDTH, HEIGHT);
 
-    const repoCount = repos.length;
+    /* const repoCount = repos.length;
     const starCount = repos.reduce((sum, repo) => sum + repo.stars, 0);
     const forkCount = repos.reduce((sum, repo) => sum + repo.forks, 0);
     const issueCount = repos.reduce((sum, repo) => sum + repo.issues, 0);
-
-    console.log({
-        repoCount,
-        starCount,
-        forkCount,
-        issueCount
-    })
 
     const formatted = [
         repoCount.toLocaleString('en-gb'),
@@ -62,8 +54,6 @@ async function generateImage(theme = 'light') {
         issueCount.toLocaleString('en-gb'),
         ` issue${issueCount!==1 ? 's' : ''}`
     ];
-    
-    ctx.fillStyle = theme === 'light' ? 'black' : 'white';
 
     let x = 340;
     formatted.forEach((text, index) => {
@@ -71,7 +61,10 @@ async function generateImage(theme = 'light') {
         ctx.font = index % 2 === 0 ? '15.5px Space Mono Bold' : '15.5px Space Mono';
         ctx.fillText(text, x, 108);
         x += text.length * 9;
-    });
+    }); */
+
+    ctx.font = '10px Space Mono';
+    ctx.fillText(`Generated on ${moment().format('MMMM Do YYYY').toLowerCase()}`, WIDTH - 180, HEIGHT - 20);
 
     const buffer = canvas.toBuffer('image/png');
     fs.writeFileSync(`banner@${theme === 'light' ? 'light' : 'dark'}.png`, buffer);
