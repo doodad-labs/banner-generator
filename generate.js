@@ -30,7 +30,9 @@ async function loadImages() {
 
 async function generateImage(theme = 'light') {
 
-    //const repos = await fetchRepos();
+    const repos = await fetchRepos();
+
+    console.log(JSON.stringify(repos))
 
     const canvas = createCanvas(WIDTH, HEIGHT);
     const ctx = canvas.getContext('2d');
@@ -39,7 +41,7 @@ async function generateImage(theme = 'light') {
     ctx.fillStyle = theme === 'light' ? 'black' : 'white';
     ctx.drawImage(theme === 'light' ? template : templateDark, 0, 0, WIDTH, HEIGHT);
 
-    /* const repoCount = repos.length;
+    const repoCount = repos.length;
     const starCount = repos.reduce((sum, repo) => sum + repo.stars, 0);
     const forkCount = repos.reduce((sum, repo) => sum + repo.forks, 0);
     const issueCount = repos.reduce((sum, repo) => sum + repo.issues, 0);
@@ -61,7 +63,7 @@ async function generateImage(theme = 'light') {
         ctx.font = index % 2 === 0 ? '15.5px Space Mono Bold' : '15.5px Space Mono';
         ctx.fillText(text, x, 108);
         x += text.length * 9;
-    }); */
+    });
 
     ctx.font = '10px Space Mono';
     ctx.fillText(`Generated on ${moment().format('MMMM Do YYYY').toLowerCase()}`, WIDTH - 180, HEIGHT - 20);
