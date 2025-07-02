@@ -32,8 +32,6 @@ async function generateImage(theme = 'light') {
 
     const repos = await fetchRepos();
 
-    console.log(JSON.stringify(repos))
-
     const canvas = createCanvas(WIDTH, HEIGHT);
     const ctx = canvas.getContext('2d');
     const { template, templateDark } = await loadImages();
@@ -66,11 +64,12 @@ async function generateImage(theme = 'light') {
     });
 
     ctx.font = '10px Space Mono';
-    ctx.fillText(`Generated on ${moment().format('MMMM Do YYYY').toLowerCase()}`, WIDTH - 180, HEIGHT - 20);
+    ctx.textAlign = 'right';
+    ctx.fillText(`Generated on ${moment().format('MMMM Do YYYY').toLowerCase()}`, WIDTH - 20, HEIGHT - 20);
 
     const buffer = canvas.toBuffer('image/png');
     fs.writeFileSync(`banner@${theme === 'light' ? 'light' : 'dark'}.png`, buffer);
-    console.log('Image generated: banner.png');
+    console.log(`Image generated: banner@${theme === 'light' ? 'light' : 'dark'}.png`);
 }
 
 generateImage().catch(console.error);
