@@ -74,7 +74,7 @@ async function generateImage(theme = 'light') {
     ctx.font = '15.5px Space Mono Bold';
     ctx.fillText(disposableEmailDomainSize.toLocaleString('en-gb'), 340, 130);
     ctx.font = '15.5px Space Mono';
-    ctx.fillText(' disposable email domains', 339 + (disposableEmailDomainSize.toLocaleString('en-gb').length * 9), 130);
+    ctx.fillText(' disposable email domains', 342 + (disposableEmailDomainSize.toLocaleString('en-gb').length * 9), 130);
 
     ctx.font = '12px Space Mono';
     ctx.fillText('- github.com/doodad-labs/disposable-email-domains', 340, 145);
