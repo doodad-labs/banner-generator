@@ -21,6 +21,11 @@ async function fetchRepos() {
     }))
 }
 
+async function fetchDisposableEmailDomainSize() {
+    const response = await axios.get('https://raw.githubusercontent.com/doodad-labs/disposable-email-domains/refs/heads/main/data/domains.txt');
+    return response.data.split('\n').filter(l => l.startsWith('#') === false && l.trim() !== '').length;
+}
+
 async function loadImages() {
     return {
         template: await loadImage('imgs/template.png'),
@@ -31,6 +36,10 @@ async function loadImages() {
 async function generateImage(theme = 'light') {
 
     const repos = await fetchRepos();
+    const disposableEmailDomainSize = await fetchDisposableEmailDomainSize().catch(err => {
+        console.error('Error fetching disposable email domain size:', err);
+        return 0; // Fallback to 0 if there's an error
+    });
 
     const canvas = createCanvas(WIDTH, HEIGHT);
     const ctx = canvas.getContext('2d');
@@ -57,11 +66,18 @@ async function generateImage(theme = 'light') {
 
     let x = 340;
     formatted.forEach((text, index) => {
-
         ctx.font = index % 2 === 0 ? '15.5px Space Mono Bold' : '15.5px Space Mono';
-        ctx.fillText(text, x, 108);
+        ctx.fillText(text, x, 85);
         x += text.length * 9;
     });
+
+    ctx.font = '15.5px Space Mono Bold';
+    ctx.fillText(disposableEmailDomainSize.toLocaleString('en-gb'), 340, 130);
+    ctx.font = '15.5px Space Mono';
+    ctx.fillText(' disposable email domains', 339 + (disposableEmailDomainSize.toLocaleString('en-gb').length * 9), 130);
+
+    ctx.font = '12px Space Mono';
+    ctx.fillText('- github.com/doodad-labs/disposable-email-domains', 340, 145);
 
     ctx.font = '10px Space Mono';
     ctx.textAlign = 'right';
